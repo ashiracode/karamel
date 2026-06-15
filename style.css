@@ -1,12 +1,12 @@
 body {
-    background-color: #ADD8E6;
+    background-color: #ba4754;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
 }
 
 header {
-    background-color: #87CEEB;
+    background-color: #d12a3d;
     padding: 20px;
     border-radius: 8px;
     text-align: center;
@@ -18,7 +18,7 @@ header h1 {
 }
 
 main {
-    background-color: #E0F6FF;
+    background-color: #d12a3d;
     padding: 30px;
     border-radius: 8px;
     margin: 20px 0;
@@ -47,6 +47,6 @@ a:hover {
 }
 
 img {
-    border-radius: 8px;
+    border-radius: 9px;
     margin: 10px 0;
 }

@@ -1,0 +1,121 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Musiques - Armand Soubrier</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        audio{
+            width:100%;
+            margin-top:15px;
+            accent-color:#ff4f84;
+            border-radius:15px;
+        }
+
+        audio::-webkit-media-controls-panel{
+            background:#ffe6ee;
+        }
+
+        audio::-webkit-media-controls-play-button{
+            background-color:#ff4f84;
+            border-radius:50%;
+        }
+
+        audio::-webkit-media-controls-timeline{
+            background-color:#ffd6e2;
+            border-radius:20px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+        <h1>🎵 Mes Musiques</h1>
+        <p>Découvrez mes créations musicales</p>
+        <p><a href="index.html">← Retour à l'accueil</a></p>
+    </header>
+
+    <main>
+
+        <section class="ep-section">
+
+            <div class="ep-info">
+                <h2>HOME</h2>
+
+                <p>
+                    HOME est mon EP regroupant plusieurs de mes créations
+                    musicales. J'écris les mélodies, les paroles et je crée
+                    également les instrumentales.
+                </p>
+
+                <p>
+                    Vous pouvez écouter quelques titres ci-dessous.
+                </p>
+            </div>
+
+            <div class="ep-cover">
+                <img src="ep.jpg" style="width: 300px;" alt="Cover de l'EP HOME">
+            </div>
+
+        </section>
+
+        <div class="container">
+
+            <div class="case">
+                <h2>Need & Want</h2>
+
+                <audio controls>
+                    <source src="musique1.wav" type="audio/mpeg">
+                    <source src="musique1.wav" type="audio/wav">
+                    Votre navigateur ne supporte pas l'audio.
+                </audio>
+            </div>
+
+            <div class="case">
+                <h2>Free</h2>
+
+                <audio controls>
+                    <source src="musique2.mp3" type="audio/mpeg">
+                    <source src="musique2.wav" type="audio/wav">
+                    Votre navigateur ne supporte pas l'audio.
+                </audio>
+            </div>
+
+            <div class="case">
+                <h2>Loose Thread</h2>
+
+                <audio controls>
+                    <source src="musique3.mp3" type="audio/mpeg">
+                    <source src="musique3.wav" type="audio/wav">
+                    Votre navigateur ne supporte pas l'audio.
+                </audio>
+            </div>
+
+            <div class="case">
+                <h2>Home</h2>
+
+                <audio controls>
+                    <source src="musique4.mp3" type="audio/mpeg">
+                    <source src="musique4.wav" type="audio/wav">
+                    Votre navigateur ne supporte pas l'audio.
+                </audio>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer>
+        <p>© 2026 - Armand Soubrier | Mes créations musicales</p>
+    </footer>
+
+</body>
+
+</html>
+```

@@ -1,36 +1,295 @@
-```html
+
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paris → Lille</title>
-    <link rel="stylesheet" href="stylejeu.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🚗 Paris → Lille</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:linear-gradient(180deg,#87CEEB,#dff6ff);
+    text-align:center;
+    padding:20px;
+}
+
+h1{
+    color:#ff4f84;
+    margin-bottom:10px;
+    font-size:3rem;
+}
+
+.score-box{
+    background:white;
+    display:inline-block;
+    padding:15px 30px;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+    margin-bottom:20px;
+    font-size:1.3rem;
+}
+
+canvas{
+    border:8px solid white;
+    border-radius:25px;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+    max-width:100%;
+}
+
+button{
+    background:linear-gradient(135deg,#ff4f84,#ff7aa2);
+    color:white;
+    border:none;
+    padding:15px 30px;
+    border-radius:50px;
+    cursor:pointer;
+    margin-bottom:20px;
+    font-size:1rem;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+a{
+    text-decoration:none;
+}
+
+</style>
+
 </head>
 
 <body>
 
-<header>
-    <h1>🚗 Paris → Lille</h1>
-    <p><a href="index.html">← Retour à l'accueil</a></p>
-</header>
+<h1>🚗 Paris → Lille</h1>
 
-<main style="text-align:center;">
+<a href="index.html">
+    <button>🏠 Retour à l'accueil</button>
+</a>
 
-    <canvas id="game" width="500" height="700"
-        style="background:#555;border-radius:20px;">
-    </canvas>
+<br>
 
-    <h2>Distance : <span id="score">0</span> km</h2>
+<div class="score-box">
+    Distance : <span id="score">0</span> / 220 km
+</div>
 
-    <p>
-        Contrôles : Z = haut, S = bas, Q = gauche, D = droite
-    </p>
+<br>
 
-</main>
+<canvas id="game" width="500" height="700"></canvas>
 
-<script src="jeu.js"></script>
+<p style="margin-top:20px;">
+    ⌨️ Contrôles : ZQSD
+</p>
+
+<script>
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const scoreElement = document.getElementById("score");
+
+let distance = 0;
+
+const player = {
+    x:220,
+    y:560,
+    w:60,
+    h:100,
+    speed:6
+};
+
+const keys = {};
+const cars = [];
+
+document.addEventListener("keydown",e=>{
+    keys[e.key.toLowerCase()] = true;
+});
+
+document.addEventListener("keyup",e=>{
+    keys[e.key.toLowerCase()] = false;
+});
+
+function spawnCar(){
+
+    const lanes = [95,185,275,365];
+
+    cars.push({
+        x:lanes[Math.floor(Math.random()*lanes.length)],
+        y:-120,
+        w:60,
+        h:100,
+        speed:5+Math.random()*3
+    });
+}
+
+setInterval(spawnCar,1000);
+
+function collision(a,b){
+
+    return(
+        a.x < b.x+b.w &&
+        a.x+a.w > b.x &&
+        a.y < b.y+b.h &&
+        a.y+a.h > b.y
+    );
+}
+
+let roadOffset = 0;
+
+function update(){
+
+    if(keys["q"]) player.x -= player.speed;
+    if(keys["d"]) player.x += player.speed;
+    if(keys["z"]) player.y -= player.speed;
+    if(keys["s"]) player.y += player.speed;
+
+    if(player.x < 60) player.x = 60;
+    if(player.x > 380) player.x = 380;
+
+    if(player.y < 0) player.y = 0;
+    if(player.y > 600) player.y = 600;
+
+    roadOffset += 8;
+
+    for(let i=0;i<cars.length;i++){
+
+        cars[i].y += cars[i].speed;
+
+        if(collision(player,cars[i])){
+            alert("💥 Accident !\nDistance parcourue : "
+            + Math.floor(distance) + " km");
+            location.reload();
+        }
+    }
+
+    distance += 0.1;
+
+    scoreElement.textContent =
+        Math.floor(distance);
+
+    if(distance >= 220){
+
+        alert("🎉 Bravo ! Tu es arrivé à Lille !");
+
+        location.reload();
+    }
+}
+
+function drawRoad(){
+
+    ctx.fillStyle="#3cb043";
+    ctx.fillRect(0,0,50,700);
+
+    ctx.fillRect(450,0,50,700);
+
+    ctx.fillStyle="#555";
+    ctx.fillRect(50,0,400,700);
+
+    ctx.strokeStyle="white";
+    ctx.lineWidth=6;
+
+    for(let y=-40;y<700;y+=50){
+
+        ctx.beginPath();
+        ctx.moveTo(250,y+(roadOffset%50));
+        ctx.lineTo(250,y+25+(roadOffset%50));
+        ctx.stroke();
+    }
+}
+
+function drawPlayer(){
+
+    ctx.fillStyle="#d80000";
+
+    ctx.fillRect(
+        player.x,
+        player.y,
+        player.w,
+        player.h
+    );
+
+    ctx.fillStyle="#87CEEB";
+
+    ctx.fillRect(
+        player.x+10,
+        player.y+20,
+        40,
+        30
+    );
+
+    ctx.fillStyle="black";
+
+    ctx.fillRect(player.x+5,player.y+10,10,20);
+    ctx.fillRect(player.x+45,player.y+10,10,20);
+
+    ctx.fillRect(player.x+5,player.y+70,10,20);
+    ctx.fillRect(player.x+45,player.y+70,10,20);
+}
+
+function drawCars(){
+
+    cars.forEach(car=>{
+
+        ctx.fillStyle="#0057ff";
+
+        ctx.fillRect(
+            car.x,
+            car.y,
+            car.w,
+            car.h
+        );
+
+        ctx.fillStyle="#87CEEB";
+
+        ctx.fillRect(
+            car.x+10,
+            car.y+20,
+            40,
+            30
+        );
+
+        ctx.fillStyle="black";
+
+        ctx.fillRect(car.x+5,car.y+10,10,20);
+        ctx.fillRect(car.x+45,car.y+10,10,20);
+
+        ctx.fillRect(car.x+5,car.y+70,10,20);
+        ctx.fillRect(car.x+45,car.y+70,10,20);
+    });
+}
+
+function gameLoop(){
+
+    update();
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    drawRoad();
+
+    drawCars();
+
+    drawPlayer();
+
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+
+</script>
 
 </body>
 </html>

@@ -4,23 +4,152 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nos Portfolios</title>
-<link rel="stylesheet" href="style.css">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#ffb3b3,#ffe6e6);
+    min-height:100vh;
+    text-align:center;
+    color:#333;
+}
+
+/* MENU */
+
+.menu{
+    position:fixed;
+    top:20px;
+    left:20px;
+    z-index:1000;
+}
+
+.menu-btn{
+    background:linear-gradient(135deg,#ff6666,#ff9999);
+    color:white;
+    border:none;
+    padding:18px 30px;
+    font-size:1.2rem;
+    border-radius:50px;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(255,0,0,0.25);
+    transition:0.3s;
+}
+
+.menu-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 25px rgba(255,0,0,0.35);
+}
+
+.menu-content{
+    display:none;
+    position:absolute;
+    top:70px;
+    left:0;
+    min-width:240px;
+    background:rgba(255,255,255,0.95);
+    backdrop-filter:blur(10px);
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.menu:hover .menu-content{
+    display:block;
+}
+
+.menu-content a{
+    display:block;
+    padding:18px;
+    text-decoration:none;
+    color:#b30000;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.menu-content a:hover{
+    background:#ffe5e5;
+    padding-left:30px;
+}
+
+/* HEADER */
+
+header{
+    padding:60px 20px 40px;
+}
+
+h1{
+    font-size:3rem;
+    color:#b30000;
+    margin-bottom:20px;
+    text-shadow:2px 2px 8px rgba(0,0,0,0.15);
+}
+
+/* IMAGES */
+
+.images{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.images img{
+    width:220px;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    transition:0.3s;
+}
+
+.images img:hover{
+    transform:scale(1.05);
+}
+
+/* FOOTER */
+
+footer{
+    margin-top:80px;
+    padding:20px;
+    background:rgba(179,0,0,0.9);
+    color:white;
+    font-size:1rem;
+}
+</style>
+
 </head>
 <body>
+
+<div class="menu">
+    <button class="menu-btn">☰ Menu</button>
+
+    <div class="menu-content">
+        <a href="armand.html">📖 Intro</a>
+        <a href="intro.html">🌟 Ma vie</a>
+        <a href="mesmusiques.html">🎵 Mes musiques</a>
+        <a href="mon ptit cv.html">💼 Mon petit CV</a>
+        <a href="stageepitech.html">💻 Mon stage à Epitech</a>
+        <a href="minigame.html">🚗 Mini-jeu Paris → Lille</a>
+    </div>
+</div>
+
 <header>
-<h1>Nos Portfolios</h1>
-<img src="https://media.tenor.com/DjbK_Ns9ee8AAAAM/typing-working.gif" alt="Ma photo" style="width: 200px;">
-<img src="photo1.jpg" alt="Ma photo" style="width: 200px;">
+    <h1>✨ Nos Portfolios ✨</h1>
+
+    <div class="images">
+        <img src="https://media.tenor.com/DjbK_Ns9ee8AAAAM/typing-working.gif" alt="GIF">
+        <img src="photo1.jpg" alt="Ma photo">
+    </div>
 </header>
-<main>
-<section>
-<h2><a href="armand.html">Intro</a></h2>
-<h2><a href="intro.html">Ma vie</a></h2>
-<h2><a href="mesmusiques.html">Mes musiques</a></h2>
-</section>
-</main>
+
 <footer>
-<p>© 2026 - Portfolios | Fait avec passion</p>
+    <p>© 2026 - Portfolios | Fait avec passion ❤️</p>
 </footer>
+
 </body>
 </html>
+```

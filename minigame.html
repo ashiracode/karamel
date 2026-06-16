@@ -1,23 +1,21 @@
-
+    ```html
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🚗 Paris → Lille</title>
+<title>🚗 Paris → Lille Challenge</title>
 
 <style>
-
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
+    font-family:Arial,sans-serif;
 }
 
 body{
-    background:linear-gradient(180deg,#87CEEB,#dff6ff);
+    background:linear-gradient(135deg,#87ceeb,#dff6ff);
     text-align:center;
     padding:20px;
 }
@@ -25,69 +23,60 @@ body{
 h1{
     color:#ff4f84;
     margin-bottom:10px;
-    font-size:3rem;
 }
 
-.score-box{
+#hud{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-bottom:15px;
+}
+
+.card{
     background:white;
-    display:inline-block;
-    padding:15px 30px;
-    border-radius:20px;
-    box-shadow:0 10px 25px rgba(0,0,0,.15);
-    margin-bottom:20px;
-    font-size:1.3rem;
+    padding:12px 20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.15);
+    font-weight:bold;
 }
 
 canvas{
     border:8px solid white;
-    border-radius:25px;
-    box-shadow:0 20px 50px rgba(0,0,0,.25);
-    max-width:100%;
+    border-radius:20px;
+    box-shadow:0 20px 40px rgba(0,0,0,.25);
 }
 
 button{
-    background:linear-gradient(135deg,#ff4f84,#ff7aa2);
+    background:#ff4f84;
     color:white;
     border:none;
-    padding:15px 30px;
-    border-radius:50px;
+    padding:12px 25px;
+    border-radius:30px;
     cursor:pointer;
-    margin-bottom:20px;
-    font-size:1rem;
+    margin-bottom:15px;
 }
-
-button:hover{
-    transform:scale(1.05);
-}
-
-a{
-    text-decoration:none;
-}
-
 </style>
-
 </head>
 
 <body>
 
-<h1>🚗 Paris → Lille</h1>
+<h1>🚗 Paris → Lille Challenge</h1>
 
 <a href="index.html">
     <button>🏠 Retour à l'accueil</button>
 </a>
 
-<br>
-
-<div class="score-box">
-    Distance : <span id="score">0</span> / 220 km
+<div id="hud">
+    <div class="card">📍 Distance : <span id="distance">0</span> km</div>
+    <div class="card">⭐ Score : <span id="score">0</span></div>
+    <div class="card">❤️ Vies : <span id="lives">3</span></div>
 </div>
-
-<br>
 
 <canvas id="game" width="500" height="700"></canvas>
 
-<p style="margin-top:20px;">
-    ⌨️ Contrôles : ZQSD
+<p style="margin-top:10px">
+⌨️ Contrôles : ZQSD
 </p>
 
 <script>
@@ -95,20 +84,18 @@ a{
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-const scoreElement = document.getElementById("score");
+const lanes = [90,190,290,390];
+
+let playerLane = 1;
 
 let distance = 0;
-
-const player = {
-    x:220,
-    y:560,
-    w:60,
-    h:100,
-    speed:6
-};
+let score = 0;
+let lives = 3;
+let roadOffset = 0;
 
 const keys = {};
-const cars = [];
+const enemies = [];
+const coins = [];
 
 document.addEventListener("keydown",e=>{
     keys[e.key.toLowerCase()] = true;
@@ -118,67 +105,105 @@ document.addEventListener("keyup",e=>{
     keys[e.key.toLowerCase()] = false;
 });
 
-function spawnCar(){
+function spawnEnemy(){
 
-    const lanes = [95,185,275,365];
-
-    cars.push({
-        x:lanes[Math.floor(Math.random()*lanes.length)],
+    enemies.push({
+        lane:Math.floor(Math.random()*4),
         y:-120,
-        w:60,
-        h:100,
         speed:5+Math.random()*3
     });
 }
 
-setInterval(spawnCar,1000);
+function spawnCoin(){
 
-function collision(a,b){
-
-    return(
-        a.x < b.x+b.w &&
-        a.x+a.w > b.x &&
-        a.y < b.y+b.h &&
-        a.y+a.h > b.y
-    );
+    coins.push({
+        lane:Math.floor(Math.random()*4),
+        y:-50,
+        speed:5
+    });
 }
 
-let roadOffset = 0;
+setInterval(spawnEnemy,900);
+setInterval(spawnCoin,1800);
 
 function update(){
 
-    if(keys["q"]) player.x -= player.speed;
-    if(keys["d"]) player.x += player.speed;
-    if(keys["z"]) player.y -= player.speed;
-    if(keys["s"]) player.y += player.speed;
+    if(keys["q"]){
+        playerLane--;
+        keys["q"] = false;
+    }
 
-    if(player.x < 60) player.x = 60;
-    if(player.x > 380) player.x = 380;
+    if(keys["d"]){
+        playerLane++;
+        keys["d"] = false;
+    }
 
-    if(player.y < 0) player.y = 0;
-    if(player.y > 600) player.y = 600;
+    playerLane =
+        Math.max(0,
+        Math.min(3,playerLane));
+
+    distance += 0.15;
+    score += 1;
+
+    document.getElementById("distance")
+        .textContent =
+        Math.floor(distance);
+
+    document.getElementById("score")
+        .textContent =
+        score;
+
+    document.getElementById("lives")
+        .textContent =
+        lives;
 
     roadOffset += 8;
 
-    for(let i=0;i<cars.length;i++){
+    enemies.forEach(enemy=>{
 
-        cars[i].y += cars[i].speed;
+        enemy.y += enemy.speed;
 
-        if(collision(player,cars[i])){
-            alert("💥 Accident !\nDistance parcourue : "
-            + Math.floor(distance) + " km");
-            location.reload();
+        if(
+            enemy.lane === playerLane &&
+            enemy.y > 520 &&
+            enemy.y < 650
+        ){
+            lives--;
+
+            enemy.y = 900;
+
+            if(lives <= 0){
+
+                alert(
+                    "💥 Game Over\nScore : "
+                    + score
+                );
+
+                location.reload();
+            }
         }
-    }
+    });
 
-    distance += 0.1;
+    coins.forEach(coin=>{
 
-    scoreElement.textContent =
-        Math.floor(distance);
+        coin.y += coin.speed;
+
+        if(
+            coin.lane === playerLane &&
+            coin.y > 540 &&
+            coin.y < 650
+        ){
+            score += 100;
+            coin.y = 900;
+        }
+    });
 
     if(distance >= 220){
 
-        alert("🎉 Bravo ! Tu es arrivé à Lille !");
+        alert(
+            "🎉 Bravo ! Tu es arrivé à Lille !\nScore : "
+            + score
+        );
 
         location.reload();
     }
@@ -188,88 +213,126 @@ function drawRoad(){
 
     ctx.fillStyle="#3cb043";
     ctx.fillRect(0,0,50,700);
-
     ctx.fillRect(450,0,50,700);
 
     ctx.fillStyle="#555";
     ctx.fillRect(50,0,400,700);
 
     ctx.strokeStyle="white";
-    ctx.lineWidth=6;
+    ctx.lineWidth=5;
 
-    for(let y=-40;y<700;y+=50){
+    for(let y=-40;y<700;y+=40){
+
+        let pos = y + (roadOffset % 40);
 
         ctx.beginPath();
-        ctx.moveTo(250,y+(roadOffset%50));
-        ctx.lineTo(250,y+25+(roadOffset%50));
+        ctx.moveTo(150,pos);
+        ctx.lineTo(150,pos+20);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(250,pos);
+        ctx.lineTo(250,pos+20);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(350,pos);
+        ctx.lineTo(350,pos+20);
         ctx.stroke();
     }
 }
 
 function drawPlayer(){
 
-    ctx.fillStyle="#d80000";
+    const x = lanes[playerLane];
 
-    ctx.fillRect(
-        player.x,
-        player.y,
-        player.w,
-        player.h
-    );
+    ctx.fillStyle="#d60000";
 
-    ctx.fillStyle="#87CEEB";
+    ctx.fillRect(x,560,60,110);
 
-    ctx.fillRect(
-        player.x+10,
-        player.y+20,
-        40,
-        30
-    );
+    ctx.fillStyle="#87ceeb";
+
+    ctx.fillRect(x+10,580,40,25);
 
     ctx.fillStyle="black";
 
-    ctx.fillRect(player.x+5,player.y+10,10,20);
-    ctx.fillRect(player.x+45,player.y+10,10,20);
+    ctx.fillRect(x+5,570,10,20);
+    ctx.fillRect(x+45,570,10,20);
 
-    ctx.fillRect(player.x+5,player.y+70,10,20);
-    ctx.fillRect(player.x+45,player.y+70,10,20);
+    ctx.fillRect(x+5,640,10,20);
+    ctx.fillRect(x+45,640,10,20);
 }
 
-function drawCars(){
+function drawEnemies(){
 
-    cars.forEach(car=>{
+    enemies.forEach(enemy=>{
+
+        const x = lanes[enemy.lane];
 
         ctx.fillStyle="#0057ff";
 
-        ctx.fillRect(
-            car.x,
-            car.y,
-            car.w,
-            car.h
-        );
+        ctx.fillRect(x,enemy.y,60,110);
 
-        ctx.fillStyle="#87CEEB";
+        ctx.fillStyle="#87ceeb";
 
         ctx.fillRect(
-            car.x+10,
-            car.y+20,
+            x+10,
+            enemy.y+20,
             40,
-            30
+            25
         );
-
-        ctx.fillStyle="black";
-
-        ctx.fillRect(car.x+5,car.y+10,10,20);
-        ctx.fillRect(car.x+45,car.y+10,10,20);
-
-        ctx.fillRect(car.x+5,car.y+70,10,20);
-        ctx.fillRect(car.x+45,car.y+70,10,20);
     });
 }
 
-function gameLoop(){
+function drawCoins(){
 
-    update();
+    coins.forEach(coin=>{
+
+        const x = lanes[coin.lane] + 20;
+
+        ctx.beginPath();
+        ctx.fillStyle="gold";
+
+        ctx.arc(
+            x,
+            coin.y,
+            15,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+    });
+}
+
+function drawSigns(){
+
+    if(distance < 20){
+        panel("Paris");
+    }
+    else if(distance < 120){
+        panel("Arras");
+    }
+    else{
+        panel("Lille");
+    }
+}
+
+function panel(text){
+
+    ctx.fillStyle="white";
+    ctx.fillRect(330,70,120,50);
+
+    ctx.strokeStyle="black";
+    ctx.strokeRect(330,70,120,50);
+
+    ctx.fillStyle="black";
+    ctx.font="20px Arial";
+
+    ctx.fillText(text,350,102);
+}
+
+function draw(){
 
     ctx.clearRect(
         0,
@@ -279,15 +342,21 @@ function gameLoop(){
     );
 
     drawRoad();
-
-    drawCars();
-
+    drawCoins();
+    drawEnemies();
+    drawSigns();
     drawPlayer();
-
-    requestAnimationFrame(gameLoop);
 }
 
-gameLoop();
+function loop(){
+
+    update();
+    draw();
+
+    requestAnimationFrame(loop);
+}
+
+loop();
 
 </script>
 
